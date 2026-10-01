@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+
+# Test output
+test-results.xml
+coverage/
+
+# Environment and secrets - never commit these
+.env
+.env.*
+*.pem
+*.key
+
+# OS / editor files
+.DS_Store
+.vscode/
+.idea/
+*.log

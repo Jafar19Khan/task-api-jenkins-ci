@@ -1,0 +1,16 @@
+{
+  "name": "task-api-jenkins-ci",
+  "version": "1.0.0",
+  "description": "A small Node.js REST API with a Jenkins CI pipeline (syntax check, tests, Docker build).",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "lint": "node scripts/check-syntax.js",
+    "test": "node --test",
+    "test:ci": "node --test --test-reporter=junit --test-reporter-destination=test-results.xml"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT"
+}
