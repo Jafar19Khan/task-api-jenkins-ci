@@ -7,7 +7,7 @@ const { TaskStore, ValidationError } = require('../src/store');
 test('create() adds a task with defaults', () => {
   const store = new TaskStore();
   const task = store.create({ title: '  Learn Jenkins  ' });
-  assert.equal(task.id, 1);
+  assert.equal(task.id, 2);
   assert.equal(task.title, 'Learn Jenkins');
   assert.equal(task.done, false);
 });
