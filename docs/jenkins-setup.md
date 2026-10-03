@@ -5,14 +5,16 @@ This guide sets up Jenkins on an AWS EC2 instance and connects it to this GitHub
 ## 1. Launch an EC2 instance
 
 - AMI: Ubuntu 22.04 or 24.04
-- Instance type: `t3.micro` (or `t2.micro`, free-tier eligible depending on your account)
-- Storage: 20 GB
+- Instance type: `t3.small` (2 GB RAM, recommended). `t3.micro` (1 GB RAM) also works but is slow
+  and needs the swap file below.
+- Storage: **20 GB** (the default 8 GB is too small: Jenkins takes its node offline when free
+  disk space drops below about 1 GB)
 - Security group inbound rules:
   - Port 22 (SSH): your IP only
   - Port 8080 (Jenkins): your IP for the UI. GitHub webhooks also need to reach this port
     (see step 5).
 
-A micro instance has about 1 GB of RAM, so add swap before installing Jenkins:
+Add a swap file before installing Jenkins (essential on `t3.micro`, still helpful on `t3.small`):
 
 ```bash
 sudo fallocate -l 2G /swapfile
@@ -25,7 +27,7 @@ sudo swapon /swapfile
 
 ```bash
 ssh -i your-key.pem ubuntu@<EC2-PUBLIC-IP>
-git clone https://github.com/Jafar19Khan/task-api-jenkins-ci.git
+git clone https://github.com/<your-username>/task-api-jenkins-ci.git
 cd task-api-jenkins-ci
 bash scripts/install-jenkins-ubuntu.sh
 ```
@@ -73,6 +75,9 @@ closed, use **Poll SCM** in the job (for example `H/5 * * * *`) instead of the w
 
 | Problem | Fix |
 |---|---|
+| Jenkins service fails to start | Current Jenkins needs Java 21 or 25. Run `java -version` and install `openjdk-21-jre` |
+| `NO_PUBKEY` / repository is not signed | The Jenkins signing key was rotated. Use the `jenkins.io-2026.key` URL (the install script already does) |
+| Build stuck on "Waiting for next available executor" | The node is offline, usually from low disk space. Check `df -h /`, enlarge the volume, then bring the node online under Manage Jenkins -> Nodes |
 | `docker: permission denied` in the build | `sudo usermod -aG docker jenkins && sudo systemctl restart jenkins` |
 | `node: command not found` | Re-run the install script, or install Node.js 22 on the server |
 | Webhook shows a red cross in GitHub | Check the security group for port 8080 and the trailing `/github-webhook/` in the URL |
